@@ -17,6 +17,21 @@ myModule.factory('AngelloHelper', function () {
 
 myModule.service('AngelloModel', function() {
 	var service = this;
+    statuses = [
+        {name: 'Back Log'},
+        {name: 'To Do'},
+        {name: 'In Progress'},
+        {name: 'Code Review'},
+        {name: 'QA Review'},
+        {name: 'Verified'},
+        {name: 'Done'}
+    ],
+    types = [
+        {name: 'Feature'},
+        {name: 'Enhancement'},
+        {name: 'Bug'},
+        {name: 'Spike'}
+        ],
 	stories=[
 		{
 		title : 'First story',
@@ -49,14 +64,32 @@ myModule.service('AngelloModel', function() {
 	service.getStrories = function(){
 		return stories;
 	}
+	service.getStatuses = function () {
+		return statuses;
+	};
+
+	service.getTypes = function () {
+		return types;
+	};
+
 
 } );
 
 myModule.controller('MainCtrl', function(AngelloModel) {
 	var main = this;
 	main.stories = AngelloModel.getStrories();
+    main.statuses = AngelloModel.getStatuses();
+    main.stories = AngelloModel.getStories();
+    main.typesIndex = AngelloHelper.buildIndex(main.types, 'name');
+    main.statusesIndex = AngelloHelper.buildIndex(main.statuses, 'name');
 
-	main.createStory = function() {
+    main.setCurrentStory = function (story) {
+        main.currentStory = story;
+        main.currentStatus = main.statusesIndex[story.status];
+        main.currentType = main.typesIndex[story.type];
+    };
+
+    main.createStory = function() {
 		main.stories.push({
 			title : 'New story',
 			description: 'Description pending',
@@ -68,8 +101,17 @@ myModule.controller('MainCtrl', function(AngelloModel) {
 		})
 	};
 
+    main.setCurrentStatus = function (status) {
+        if (typeof main.currentStory !== 'undefined') {
+            main.currentStory.status = status.name;
+        }
+    };
 
-
+    main.setCurrentType = function (type) {
+        if (typeof main.currentStory !== 'undefined') {
+            main.currentStory.type = type.name;
+        }
+    };
 });
 myModule.directive('story', function() {
 	return {
