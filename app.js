@@ -63,7 +63,7 @@ myModule.service('AngelloModel', function() {
 
 	service.getStrories = function(){
 		return stories;
-	}
+	};
 	service.getStatuses = function () {
 		return statuses;
 	};
